@@ -13,10 +13,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # Oldest supported SDK.
+          # Oldest supported SDK. pubspec.lock is resolved for it and enforced.
           - sdk: 3.4.4
-            pub-get: dart pub get
-          # Latest stable SDK, resolving dependencies fresh as apps do.
+            pub-get: dart pub get --enforce-lockfile
+          # Latest stable SDK. The 3.4.4 lock pins SDK vendored packages that
+          # newer SDKs lack, so this leg resolves fresh as apps do.
           - sdk: 3.14.1
             pub-get: dart pub get
     steps:
@@ -27,9 +28,6 @@ jobs:
         with:
           sdk: ${{ matrix.sdk }}
       - run: ${{ matrix.pub-get }}
-      - name: Print the resolved lockfile
-        if: matrix.sdk == '3.4.4'
-        run: cat pubspec.lock
       - run: dart format --output=none --set-exit-if-changed .
       - name: Show formatting changes
         if: failure()
