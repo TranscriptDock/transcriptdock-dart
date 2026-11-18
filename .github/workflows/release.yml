@@ -1,0 +1,40 @@
+name: Check Dart package
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  check:
+    name: Dart ${{ matrix.sdk }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Oldest supported SDK.
+          - sdk: 3.4.4
+            pub-get: dart pub get
+          # Latest stable SDK, resolving dependencies fresh as apps do.
+          - sdk: 3.14.1
+            pub-get: dart pub get
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: dart-lang/setup-dart@2286a0c042b44434fe26d292bbce8d34f7ec662b # v1.8.2
+        with:
+          sdk: ${{ matrix.sdk }}
+      - run: ${{ matrix.pub-get }}
+      - name: Print the resolved lockfile
+        if: matrix.sdk == '3.4.4'
+        run: cat pubspec.lock
+      - run: dart format --output=none --set-exit-if-changed .
+      - name: Show formatting changes
+        if: failure()
+        run: dart format . && git --no-pager diff
+      - run: dart analyze --fatal-infos
+      - run: dart test
+      - run: python3 .ci/check.py
+      - run: dart pub publish --dry-run

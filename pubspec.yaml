@@ -1,0 +1,27 @@
+name: transcriptdock
+description: >-
+  Dart and Flutter client for the Transcript Dock API. Transcribe YouTube,
+  TikTok and Instagram videos with explicit idempotency and bounded polling.
+version: 0.1.0
+homepage: https://www.transcriptdock.com/docs
+repository: https://github.com/TranscriptDock/transcriptdock-dart
+issue_tracker: https://github.com/TranscriptDock/transcriptdock-dart/issues
+documentation: https://www.transcriptdock.com/docs
+topics:
+  - transcription
+  - youtube
+  - tiktok
+  - api
+  - subtitles
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+# pubspec.lock pins the exact resolved version. A published library needs a
+# range here, and pub rejects single version constraints on dependencies.
+dependencies:
+  http: ^1.6.0
+
+dev_dependencies:
+  lints: 4.0.0
+  test: 1.25.8
